@@ -1,0 +1,105 @@
+# frozen_string_literal: true
+
+require "json"
+require "tmpdir"
+
+RSpec.describe RequireProfiler do
+  it "captures all requires including gem loading when no filters are given" do
+    script = <<~RUBY
+      require "stringio"
+      io = StringIO.new
+      RequireProfiler.start(output: io)
+      require "json"
+      require "leaf_a"
+      RequireProfiler.stop
+      puts io.string
+    RUBY
+
+    stdout, stderr, status = run_profiler(script)
+
+    expect(status).to be_success, "stderr: #{stderr}"
+    expect(stdout).to include("leaf_a.rb")
+    expect(stdout).to include("nested.rb")
+    expect(stdout).to include("lib/json.rb")
+  end
+
+  it "filters captured requires using patterns and exclude_patterns" do
+    script = <<~RUBY
+      require "stringio"
+      io = StringIO.new
+      RequireProfiler.start(
+        output: io,
+        patterns: ["#{fixtures_dir}/*.rb"],
+        exclude_patterns: ["*/nested.rb"]
+      )
+      require "json"
+      require "leaf_a"
+      RequireProfiler.stop
+      puts io.string
+    RUBY
+
+    stdout, stderr, status = run_profiler(script)
+
+    expect(status).to be_success, "stderr: #{stderr}"
+    expect(stdout).to include("leaf_a.rb")
+    expect(stdout).not_to include("nested.rb")
+    expect(stdout).not_to include("lib/json.rb")
+  end
+
+  it "prints a text report to $stdout when not output is defined" do
+    script = <<~RUBY
+      RequireProfiler.start
+      require "leaf_a"
+      RequireProfiler.stop
+    RUBY
+
+    stdout, stderr, status = run_profiler(script)
+
+    expect(status).to be_success, "stderr: #{stderr}"
+    expect(stdout).not_to be_empty
+    expect(stdout).to include("leaf_a.rb")
+    expect(stdout).to include("nested.rb")
+    expect { JSON.parse(stdout) }.to raise_error(JSON::ParserError)
+  end
+
+  it "writes a Speedscope JSON report to a file path" do
+    Dir.mktmpdir do |dir|
+      report_path = File.join(dir, "require-report.json")
+
+      script = <<~RUBY
+        RequireProfiler.start(output: "#{report_path}")
+        require "leaf_a"
+        RequireProfiler.stop
+      RUBY
+
+      _stdout, stderr, status = run_profiler(script)
+
+      expect(status).to be_success, "stderr: #{stderr}"
+      expect(File).to exist(report_path)
+
+      data = JSON.parse(File.read(report_path))
+
+      expect(data).to include("$schema", "profiles", "shared")
+      expect(data["shared"]).to include("frames")
+      expect(data["shared"]["frames"]).to be_an(Array)
+      expect(data["shared"]["frames"].last["name"]).to eq("spec/fixtures/nested.rb")
+    end
+  end
+
+  it "writes JSON to any IO when format: :json is given explicitly" do
+    script = <<~RUBY
+      require "stringio"
+      io = StringIO.new
+      RequireProfiler.start(output: io, format: :json)
+      require "leaf_a"
+      RequireProfiler.stop
+      puts io.string
+    RUBY
+
+    stdout, stderr, status = run_profiler(script)
+
+    expect(status).to be_success, "stderr: #{stderr}"
+    data = JSON.parse(stdout)
+    expect(data).to include("profiles", "shared")
+  end
+end

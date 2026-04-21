@@ -1,0 +1,3 @@
+bump:
+  file: lib/require_profiler/version.rb
+  skip_ci: true

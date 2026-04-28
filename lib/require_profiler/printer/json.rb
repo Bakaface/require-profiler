@@ -59,6 +59,7 @@ module RequireProfiler
         }
 
         output.write(::JSON.pretty_generate(profile))
+        output.truncate(output.pos)
         super
       end
     end

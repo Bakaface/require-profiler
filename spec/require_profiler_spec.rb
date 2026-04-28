@@ -86,6 +86,26 @@ RSpec.describe RequireProfiler do
     end
   end
 
+  it "does not leave trailing call-stack bytes when the JSON is shorter than the buffered stack" do
+    Dir.mktmpdir do |dir|
+      20.times do |i|
+        File.write(File.join(dir, "leaf_#{i}.rb"), "require_relative 'leaf_#{(i + 1) % 20}'")
+      end
+
+      report_path = File.join(dir, "require-report.json")
+
+      script = <<~RUBY
+        RequireProfiler.start(output: "#{report_path}")
+        require "#{dir}/leaf_0"
+        RequireProfiler.stop
+      RUBY
+
+      _stdout, _stderr, _status = run_profiler(script)
+
+      expect { JSON.parse(File.read(report_path)) }.not_to raise_error
+    end
+  end
+
   it "writes JSON to any IO when format: :json is given explicitly" do
     script = <<~RUBY
       require "stringio"

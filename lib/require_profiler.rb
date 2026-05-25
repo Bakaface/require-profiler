@@ -7,7 +7,7 @@ module RequireProfiler
   class << self
     attr_reader :reporter
 
-    def start(output: $stdout, format: nil, patterns: nil, exclude_patterns: nil)
+    def start(output: ENV.fetch("REQUIRE_PROFILE_PATH", $stdout), format: ENV["REQUIRE_PROFILE_FORMAT"], patterns: nil, exclude_patterns: nil)
       raise ArgumentError, "There is already profiling in progress" if reporter
 
       reporter = @reporter = Reporter.new(printer: Printer.resolve(output, format))

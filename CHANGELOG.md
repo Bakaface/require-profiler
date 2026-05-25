@@ -2,6 +2,10 @@
 
 ## master
 
+- Add `-require-prof` support.
+
+- Support passing format and output path via `REQUIRE_PROFILE_FORMAT` and `REQUIRE_PROFILE_PATH`. ([@palkan][])
+
 ## 0.1.1 (2026-04-29)
 
 - Fix JSON printer leaving trailing call-stack bytes in output. ([@ardecvz][])

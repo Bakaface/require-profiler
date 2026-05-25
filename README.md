@@ -24,6 +24,36 @@ gem "require-profiler"
 
 ## Usage
 
+### Using `-require-prof` command switch
+
+Given that `require-profiler` is a part of your bundle (or available globally), you can enable it as follows:
+
+```sh
+# Without Bundler
+ruby -require-prof some_ruby_script.rb
+
+# With Bundler
+ruby -rbundler/setup -require-prof some_ruby_script.rb
+```
+
+For Rails applications, the command will look like:
+
+```sh
+bundle exec ruby -r./config/boot -require-prof config/environment.rb
+```
+
+We load the `config/boot.rb` file first to set up Bundler and **Bootsnap** (it must be required before require-hooks).
+
+You can use environment variables to specify the output format and path. For example:
+
+```sh
+REQUIRE_PROFILE_PATH=tmp/require-prof.json  bundle exec ruby -r./config/boot -require-prof config/environment.rb
+```
+
+### Programmable usage
+
+If you code loading process is more complicated, you can manually start and stop the profiler from your application.
+
 Wrap the code you want to profile with `RequireProfiler.start` and `RequireProfiler.stop`:
 
 ```ruby
@@ -54,7 +84,7 @@ RequireProfiler.start(
 `RequireProfiler.start` accepts the following keyword arguments:
 
 - `output:` — `$stdout` (default), any IO-like object, or a file path (string).
-- `format:` — `:text` (default), `:call_stack`, or `:json`. When `output:` is a file path with a `.json` extension, the JSON format is picked automatically.
+- `format:` — `:text` (default), `:call_stack`, or `:json`. When `output:` is a file path with a `.json` extension, the JSON format is picked automatically. You can also provide format via the `REQUIRE_PROFILE_FORMAT` env var.
 - `patterns:` / `exclude_patterns:` — see above.
 
 ## Output formats

@@ -7,10 +7,17 @@ module RequireProfiler
   class << self
     attr_reader :reporter
 
-    def start(output: ENV.fetch("REQUIRE_PROFILE_PATH", $stdout), format: ENV["REQUIRE_PROFILE_FORMAT"], patterns: nil, exclude_patterns: nil, threshold: ENV.fetch("REQUIRE_PROFILE_THRESHOLD", "0.0").to_f)
+    def start(
+      output: ENV.fetch("REQUIRE_PROFILE_PATH", $stdout),
+      format: ENV["REQUIRE_PROFILE_FORMAT"],
+      threshold: ENV.fetch("REQUIRE_PROFILE_THRESHOLD", "0.0").to_f,
+      focus: ENV["REQUIRE_PROFILE_FOCUS"],
+      patterns: nil, exclude_patterns: nil
+    )
       raise ArgumentError, "There is already profiling in progress" if reporter
 
-      reporter = @reporter = Reporter.new(printer: Printer.resolve(output, format, threshold:))
+      focus = Regexp.new(focus) if focus.is_a?(String)
+      reporter = @reporter = Reporter.new(printer: Printer.resolve(output, format, threshold:, focus:), focus:)
 
       require "require-hooks/setup"
 

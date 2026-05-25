@@ -3,12 +3,13 @@
 module RequireProfiler
   module Printer
     class Base
-      private attr_reader :output, :threshold
+      private attr_reader :output, :threshold, :focus
       private attr_reader :prefix_stripper
 
-      def initialize(output, threshold: 0.0)
+      def initialize(output, threshold: 0.0, focus: nil)
         @output = output
         @threshold = threshold
+        @focus = focus
 
         # Identify prefixes for the project and the gems
         prefixes = [::Dir.pwd]
@@ -24,6 +25,16 @@ module RequireProfiler
 
       def finish
         output.close if output.respond_to?(:close) && output != $stdout
+      end
+
+      private
+
+      def flush?(node)
+        return false unless (node.time * 1000) >= threshold
+
+        return false if focus && !node.focused
+
+        true
       end
     end
 

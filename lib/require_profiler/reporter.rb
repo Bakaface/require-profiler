@@ -5,19 +5,26 @@ module RequireProfiler
     class Event < Struct.new(:type, :path, :time, keyword_init: true)
     end
 
-    class Node < Struct.new(:path, :time, :children, keyword_init: true)
+    class Node < Struct.new(:path, :time, :parent, :children, :focused, keyword_init: true)
       def initialize(...)
         super
         self.children ||= []
+        self.focused = false
+      end
+
+      def focused!
+        self.focused = true
+        parent&.focused!
       end
     end
 
-    private attr_reader :stack, :totals, :printer, :processor, :queue
+    private attr_reader :stack, :totals, :printer, :processor, :queue, :focus
 
-    def initialize(printer:)
+    def initialize(printer:, focus: nil)
       @stack = []
       @totals = {count: 0, time: 0.0}
       @printer = printer
+      @focus = focus
       @processor = nil
       @queue = Queue.new
 
@@ -31,12 +38,19 @@ module RequireProfiler
     def handle_event_sync(event)
       if event.type == :start
         node = Node.new(path: event.path, children: [])
-        stack.last&.children&.push(node)
+        parent = stack.last
+
+        if parent
+          node.parent = parent
+          parent.children&.push(node)
+        end
 
         stack << node
       elsif event.type == :end
         last = stack.pop
         last.time = event.time
+
+        last.focused! if focus && last.path.match?(focus)
 
         printer.flush(last) if stack.empty?
 

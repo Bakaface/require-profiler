@@ -56,6 +56,12 @@ You can also specify the threshold to display only files taking at least the pro
 REQUIRE_PROFILE_THRESHOLD=100 bundle exec ruby -r./config/boot -require-prof config/environment.rb
 ```
 
+Or file matching the provided _focus_ pattern:
+
+```sh
+REQUIRE_PROFILE_FOCUS=stripe bundle exec ruby -r./config/boot -require-prof config/environment.rb
+```
+
 ### Programmable usage
 
 If you code loading process is more complicated, you can manually start and stop the profiler from your application.

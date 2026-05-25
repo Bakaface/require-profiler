@@ -46,6 +46,30 @@ RSpec.describe RequireProfiler do
     expect(stdout).not_to include("lib/json.rb")
   end
 
+  it "filters stacks by focus" do
+    script = <<~RUBY
+      require "stringio"
+      io = StringIO.new
+      RequireProfiler.start(
+        output: io,
+        focus: "leaf"
+      )
+      require "json"
+      require "leaf_b"
+      require "leaf_a"
+      RequireProfiler.stop
+      puts io.string
+    RUBY
+
+    stdout, stderr, status = run_profiler(script)
+
+    expect(status).to be_success, "stderr: #{stderr}"
+    expect(stdout).to include("leaf_a.rb")
+    expect(stdout).to include("leaf_b.rb")
+    expect(stdout).not_to include("lib/json.rb")
+    expect(stdout).not_to include("nested.rb")
+  end
+
   it "prints a text report to $stdout when not output is defined" do
     script = <<~RUBY
       RequireProfiler.start

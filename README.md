@@ -91,6 +91,23 @@ RequireProfiler.start(
 )
 ```
 
+### Ruby profilers integration
+
+Whenever you identified the files that take a long time to load, it's useful to look at them closer and profile the load process using some generic profiler. Require Profiler simplifies this down to the environment variable usage. This is, for example, how you can profile the loading of an initializer file via StackProf:
+
+```sh
+$ REQUIRE_PROFILE_STACKPROF=config/initializers/fragment.rb REQUIRE_PROFILE_THRESHOLD=100 be ruby -r./config/boot -require-prof config/environment.rb
+
+...
+Stackprof JSON profile for config/initializers/fragment.rb is generated: config-initializers-fragment-stackprof.json
+...
+
+```
+
+Now you can use Speedscope to dig deeper.
+
+**NOTE:** The `stackprof` gem must be present in your Gemfile for that.
+
 ### Configuration
 
 `RequireProfiler.start` accepts the following keyword arguments:

@@ -4,6 +4,9 @@ module RequireProfiler
   autoload :Reporter, "require_profiler/reporter"
   autoload :Printer, "require_profiler/printer"
 
+  # Autoload doesn't work here, because we call it from the hooks for the first time
+  require "require_profiler/ruby_profiling"
+
   class << self
     attr_reader :reporter
 
@@ -26,7 +29,11 @@ module RequireProfiler
 
         reporter.handle_event(Reporter::Event.new(type: :start, path:))
 
-        block.call
+        if RubyProfiling.enabled?
+          RubyProfiling.capture(path) { block.call }
+        else
+          block.call
+        end
       ensure
         time = Time.now - start
         reporter.handle_event(Reporter::Event.new(type: :end, path:, time:))

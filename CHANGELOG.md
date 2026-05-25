@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.0 (2026-05-25) 🔔
+
+- Add ability to run Stackprof for a particular file loading. ([@palkan][])
+
 - Add focus support (to include only matching files). ([@palkan][])
 
 - Add threshold support (`REQUIRE_PROFILE_THRESHOLD`). ([@palkan][])

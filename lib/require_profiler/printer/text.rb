@@ -6,6 +6,8 @@ module RequireProfiler
       PAD = "  "
 
       def flush(node, indent: 0)
+        return unless (node.time * 1000) >= threshold
+
         path = node.path.sub(prefix_stripper, "")
         output << "#{PAD * indent}#{path} — #{time_to_duration(node.time)}\n"
         node.children.each { flush(_1, indent: indent + 1) }

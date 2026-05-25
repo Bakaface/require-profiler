@@ -3,11 +3,12 @@
 module RequireProfiler
   module Printer
     class Base
-      private attr_reader :output
+      private attr_reader :output, :threshold
       private attr_reader :prefix_stripper
 
-      def initialize(output)
+      def initialize(output, threshold: 0.0)
         @output = output
+        @threshold = threshold
 
         # Identify prefixes for the project and the gems
         prefixes = [::Dir.pwd]
@@ -31,14 +32,14 @@ module RequireProfiler
     autoload :JSON, "require_profiler/printer/json"
 
     class << self
-      def resolve(output, format)
+      def resolve(output, format, **opts)
         format ||= (output.is_a?(String) && File.extname(output) == ".json") ? :json : :text
         output = File.open(output, "w+") if output.is_a?(String)
 
         case format.to_sym
-        when :json then JSON.new(output)
-        when :call_stack then CallStack.new(output)
-        when :text then Text.new(output)
+        when :json then JSON.new(output, **opts)
+        when :call_stack then CallStack.new(output, **opts)
+        when :text then Text.new(output, **opts)
         else
           raise ArgumentError, "Unknown format specified: #{format}. Available formats: text, json, call_stack"
         end

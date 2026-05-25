@@ -5,6 +5,8 @@ module RequireProfiler
     # CallStack formatter prints collapsed stacks (Brendan Gregg's format)
     class CallStack < Base
       def flush(node, parts: [])
+        return unless (node.time * 1000) >= threshold
+
         path = node.path.sub(prefix_stripper, "")
         self_parts = path.split("/")
 

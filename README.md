@@ -47,7 +47,13 @@ We load the `config/boot.rb` file first to set up Bundler and **Bootsnap** (it m
 You can use environment variables to specify the output format and path. For example:
 
 ```sh
-REQUIRE_PROFILE_PATH=tmp/require-prof.json  bundle exec ruby -r./config/boot -require-prof config/environment.rb
+REQUIRE_PROFILE_PATH=tmp/require-prof.json bundle exec ruby -r./config/boot -require-prof config/environment.rb
+```
+
+You can also specify the threshold to display only files taking at least the provided number of milliseconds to load:
+
+```sh
+REQUIRE_PROFILE_THRESHOLD=100 bundle exec ruby -r./config/boot -require-prof config/environment.rb
 ```
 
 ### Programmable usage
@@ -79,12 +85,13 @@ RequireProfiler.start(
 )
 ```
 
-### Output
+### Configuration
 
 `RequireProfiler.start` accepts the following keyword arguments:
 
 - `output:` — `$stdout` (default), any IO-like object, or a file path (string).
 - `format:` — `:text` (default), `:call_stack`, or `:json`. When `output:` is a file path with a `.json` extension, the JSON format is picked automatically. You can also provide format via the `REQUIRE_PROFILE_FORMAT` env var.
+- `threshold:` — the number of **milliseconds** to use as a threshold to ignore files taking less to load, float. Default is 0.0
 - `patterns:` / `exclude_patterns:` — see above.
 
 ## Output formats

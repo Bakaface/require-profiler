@@ -2,7 +2,9 @@
 
 ## master
 
-- Add `-require-prof` support.
+- Add threshold support (`REQUIRE_PROFILE_THRESHOLD`). ([@palkan][])
+
+- Add `-require-prof` support. ([@palkan][])
 
 - Support passing format and output path via `REQUIRE_PROFILE_FORMAT` and `REQUIRE_PROFILE_PATH`. ([@palkan][])
 

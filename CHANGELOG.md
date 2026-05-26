@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.1 (2026-05-26)
+
+- Add YAML tracking. ([@palkan][])
+
 - Add HTTP tracking via Sniffer. ([@palkan][])
 
 ## 0.2.0 (2026-05-25) 🔔

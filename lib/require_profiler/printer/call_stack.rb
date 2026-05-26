@@ -8,7 +8,7 @@ module RequireProfiler
         return unless flush?(node)
 
         path = node.path.sub(prefix_stripper, "")
-        self_parts = path.split("/")
+        self_parts = (node.kind == :path) ? path.split("/") : [path]
 
         parts += self_parts.size.times.map { self_parts.take(_1 + 1).join("/") }
         # We only show self-time, so exclude children

@@ -22,7 +22,7 @@ module RequireProfiler
         attr_accessor :reporter
 
         def track(path)
-          reporter.handle_event(Reporter::Event.new(type: :start, path:))
+          reporter.handle_event(Reporter::Event.new(type: :start, kind: :yml, path:))
           start = Time.now
           yield
         ensure

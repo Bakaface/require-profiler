@@ -2,14 +2,15 @@
 
 module RequireProfiler
   class Reporter
-    class Event < Struct.new(:type, :path, :time, keyword_init: true)
+    class Event < Struct.new(:type, :path, :time, :kind, keyword_init: true)
     end
 
-    class Node < Struct.new(:path, :time, :parent, :children, :focused, keyword_init: true)
+    class Node < Struct.new(:path, :time, :parent, :children, :kind, :focused, keyword_init: true)
       def initialize(...)
         super
         self.children ||= []
         self.focused = false
+        self.kind ||= :path
       end
 
       def focused!
@@ -37,7 +38,7 @@ module RequireProfiler
 
     def handle_event_sync(event)
       if event.type == :start
-        node = Node.new(path: event.path, children: [])
+        node = Node.new(path: event.path, children: [], kind: event.kind)
         parent = stack.last
 
         if parent

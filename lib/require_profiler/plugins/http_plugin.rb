@@ -28,7 +28,7 @@ module RequireProfiler
 
       # Sniffer hook interface
       def request(data_item)
-        reporter.handle_event(Reporter::Event.new(type: :start, path: data_item.request.require_path))
+        reporter.handle_event(Reporter::Event.new(type: :start, kind: :http, path: data_item.request.require_path))
         yield
       end
 

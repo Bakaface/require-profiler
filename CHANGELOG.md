@@ -2,6 +2,8 @@
 
 ## master
 
+- Add HTTP tracking via Sniffer. ([@palkan][])
+
 ## 0.2.0 (2026-05-25) 🔔
 
 - Add ability to run Stackprof for a particular file loading. ([@palkan][])

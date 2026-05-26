@@ -3,6 +3,7 @@
 module RequireProfiler
   autoload :Reporter, "require_profiler/reporter"
   autoload :Printer, "require_profiler/printer"
+  autoload :Plugins, "require_profiler/plugins"
 
   # Autoload doesn't work here, because we call it from the hooks for the first time
   require "require_profiler/ruby_profiling"
@@ -38,6 +39,8 @@ module RequireProfiler
         time = Time.now - start
         reporter.handle_event(Reporter::Event.new(type: :end, path:, time:))
       end
+
+      Plugins.register_reporter(reporter) unless ENV["REQUIRE_PROFILER_PLUGINS"] == "false"
     end
 
     def stop

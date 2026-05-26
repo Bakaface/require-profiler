@@ -28,6 +28,9 @@ Gem::Specification.new do |s|
   s.add_dependency "require-hooks", "~> 0.3"
 
   s.add_development_dependency "bundler", ">= 1.15"
+  s.add_development_dependency "logger"
   s.add_development_dependency "rake", ">= 13.0"
   s.add_development_dependency "rspec", ">= 3.9"
+  s.add_development_dependency "sniffer"
+  s.add_development_dependency "webmock", "~> 3.26"
 end

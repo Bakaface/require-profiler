@@ -108,6 +108,10 @@ Now you can use Speedscope to dig deeper.
 
 **NOTE:** The `stackprof` gem must be present in your Gemfile for that.
 
+### YAML and HTTP support
+
+Require Profiler also captures HTTP requests and YAML file loading and add them to the profile, so you can find which Ruby files trigger the corresponding actions on load. NOTE: For HTTP requests tracking, you MUST add [sniffer][] gem to your Gemfile.
+
 ### Configuration
 
 `RequireProfiler.start` accepts the following keyword arguments:
@@ -189,3 +193,4 @@ The gem is available as open source under the terms of the [MIT License](http://
 
 [speedscope]: https://www.speedscope.app/
 [require-hooks]: https://github.com/ruby-next/require-hooks
+[sniffer]: https://github.com/aderyabin/sniffer

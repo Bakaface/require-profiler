@@ -6,15 +6,15 @@ module RequireProfiler
     class YAMLPlugin < Base
       module Patch
         def load_file(path, ...)
-          YAMLPlugin.track(path) { super }
+          YAMLPlugin.track(path.to_s) { super }
         end
 
         def unsafe_load_file(path, ...)
-          YAMLPlugin.track(path) { super }
+          YAMLPlugin.track(path.to_s) { super }
         end
 
         def safe_load_file(path, ...)
-          YAMLPlugin.track(path) { super }
+          YAMLPlugin.track(path.to_s) { super }
         end
       end
 

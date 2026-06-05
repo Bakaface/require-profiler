@@ -2,6 +2,8 @@
 
 ## master
 
+- Fixed YAML tracking when Pathname is used. ([@palkan][])
+
 ## 0.2.1 (2026-05-26)
 
 - Add YAML tracking. ([@palkan][])

@@ -167,21 +167,67 @@ This emits one line per stack in Brendan Gregg's collapsed format with per-frame
 | `REQUIRE_PROFILER_HTTP` | Disable HTTP tracking when set to `false` | `false` |
 | `REQUIRE_PROFILER_PLUGINS` | Disable all plugins when set to `false` | `false` |
 
+## Important: Use the Profiler's Built-in Filtering
+
+**Prefer profiler's built-in filtering and searching capabilities over `grep`, `tail`, `head`, `awk`, or `sed` to filter or search results.**:
+
+- To find slow files → use `REQUIRE_PROFILE_THRESHOLD`, not `grep` for timing patterns
+- To investigate a specific gem or file → use `REQUIRE_PROFILE_FOCUS`, not `grep` for the name
+- To reduce output size → use `REQUIRE_PROFILE_THRESHOLD` + `REQUIRE_PROFILE_FOCUS`, not `tail -N | head -M`
+
+Shell-based filtering breaks the indented tree structure (you lose parent-child relationships), misses context, and requires re-running the full profile each time you change the filter. The built-in env vars preserve the tree, show ancestor chains, and handle edge cases the profiler already knows about.
+
+The only acceptable uses of piping are:
+- `| wc -l` to count total loaded files in step 1
+- Piping into a file when `REQUIRE_PROFILE_PATH` is not available
+
 ## Recommended Agent Workflow
 
 Follow this sequence when a user asks about slow boot time:
 
 1. **Get a baseline.** Run the full profile command and note the total boot time (the top-level entry's duration) and total file count (`| wc -l`).
 
-2. **Find the top offenders.** Re-run with `REQUIRE_PROFILE_THRESHOLD=100` (or adjust based on total time) to surface only slow files. Report the top 5-10 slowest entries to the user.
+   ```sh
+   bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
 
-3. **Investigate specific areas.** If the user suspects a particular gem or area, use `REQUIRE_PROFILE_FOCUS` to zoom in. Otherwise, focus on the slowest entries from step 2.
+2. **Find the top offenders.** Re-run with `REQUIRE_PROFILE_THRESHOLD` to surface only slow files. Start with a threshold that shows roughly 10-20 entries (e.g., if total boot is ~4s, try 100ms; if ~1s, try 30ms). Report the top slowest entries to the user.
 
-4. **Check for boot-time side effects.** Look at YAML and HTTP entries in the profile. HTTP calls during boot are almost always worth investigating — they add latency and can fail. YAML loads of large files can also be significant.
+   ```sh
+   REQUIRE_PROFILE_THRESHOLD=100 bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
+
+3. **Investigate specific areas.** Use `REQUIRE_PROFILE_FOCUS` to zoom into a gem, initializer, or file. The focus pattern is a regexp — use it to match file paths, gem names, or directory patterns. Combine with `REQUIRE_PROFILE_THRESHOLD` for precision.
+
+   ```sh
+   # Investigate a specific gem
+   REQUIRE_PROFILE_FOCUS="stripe" bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+
+   # Investigate all initializers that took > 50ms
+   REQUIRE_PROFILE_THRESHOLD=50 REQUIRE_PROFILE_FOCUS="initializers" bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
+
+4. **Check for boot-time side effects.** YAML and HTTP entries appear in the profile tree by default. HTTP calls during boot are almost always worth investigating — they add latency and can fail. Use `REQUIRE_PROFILE_FOCUS` to find them:
+
+   ```sh
+   # Find YAML loading
+   REQUIRE_PROFILE_FOCUS="\.yml" bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+
+   # Find HTTP calls during boot
+   REQUIRE_PROFILE_FOCUS="(GET|POST|PATCH|DELETE):" bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
 
 5. **Deep-dive when needed.** For files that are unexpectedly slow (the load time seems too high for what the file does), use `REQUIRE_PROFILE_STACKPROF` to generate a Stackprof profile and identify what's happening inside that file.
 
-6. **Generate a JSON profile for handoff.** If the user wants to explore the data themselves, or if the profile is too large to analyze in text, export to JSON with `REQUIRE_PROFILE_PATH=tmp/require-profile.json` and point them to Speedscope.
+   ```sh
+   REQUIRE_PROFILE_STACKPROF=config/initializers/stripe.rb bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
+
+6. **Generate a JSON profile for handoff.** If the user wants to explore the data themselves, or if the profile is too large to analyze in text, export to JSON and point them to Speedscope.
+
+   ```sh
+   REQUIRE_PROFILE_PATH=tmp/require-profile.json bundle exec ruby -W0 -r./config/boot -require-prof config/environment.rb
+   ```
 
 7. **Suggest actionable improvements** based on findings:
    - Move heavy gem requires behind lazy loading or autoload

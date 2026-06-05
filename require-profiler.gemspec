@@ -18,12 +18,13 @@ Gem::Specification.new do |s|
     "homepage_uri" => "https://github.com/palkan/require-profiler",
     "source_code_uri" => "https://github.com/palkan/require-profiler",
     "hyperdrive_targets" => "railties",
-    "hyperdrive_artifacts" => "skill"
+    "hyperdrive_artifacts" => "skill",
+    "hyperdrive_skills_dir" => "./skills"
   }
 
   s.license = "MIT"
 
-  s.files = Dir.glob("lib/**/*") + Dir.glob("bin/**/*") + %w[README.md LICENSE.txt CHANGELOG.md]
+  s.files = Dir.glob("lib/**/*") + Dir.glob("bin/**/*") + Dir.glob("skills/**/*") + %w[README.md LICENSE.txt CHANGELOG.md]
   s.require_paths = ["lib"]
   s.required_ruby_version = ">= 3.1"
 

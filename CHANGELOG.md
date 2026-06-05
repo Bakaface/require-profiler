@@ -2,6 +2,10 @@
 
 ## master
 
+## 0.2.3 (2026-06-05)
+
+- Add SKILL.md for rails-hyperdrive. ([@palkan][])
+
 ## 0.2.2 (2026-06-05)
 
 - Fixed YAML tracking when Pathname is used. ([@palkan][])

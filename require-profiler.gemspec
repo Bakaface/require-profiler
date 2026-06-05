@@ -16,7 +16,9 @@ Gem::Specification.new do |s|
     "changelog_uri" => "https://github.com/palkan/require-profiler/blob/master/CHANGELOG.md",
     "documentation_uri" => "https://github.com/palkan/require-profiler",
     "homepage_uri" => "https://github.com/palkan/require-profiler",
-    "source_code_uri" => "https://github.com/palkan/require-profiler"
+    "source_code_uri" => "https://github.com/palkan/require-profiler",
+    "hyperdrive_targets" => "railties",
+    "hyperdrive_artifacts" => "skill"
   }
 
   s.license = "MIT"

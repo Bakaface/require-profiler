@@ -2,6 +2,8 @@
 
 ## master
 
+## 0.2.2 (2026-06-05)
+
 - Fixed YAML tracking when Pathname is used. ([@palkan][])
 
 ## 0.2.1 (2026-05-26)

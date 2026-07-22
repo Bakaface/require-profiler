@@ -20,7 +20,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).to include("nested.rb")
-    expect(stdout).to include("lib/json.rb")
+    expect(stdout).to include("json.rb")
   end
 
   it "filters captured requires using patterns and exclude_patterns" do
@@ -43,7 +43,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).not_to include("nested.rb")
-    expect(stdout).not_to include("lib/json.rb")
+    expect(stdout).not_to include("json.rb")
   end
 
   it "filters stacks by focus" do
@@ -66,7 +66,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).to include("leaf_b.rb")
-    expect(stdout).not_to include("lib/json.rb")
+    expect(stdout).not_to include("json.rb")
     expect(stdout).not_to include("nested.rb")
   end
 

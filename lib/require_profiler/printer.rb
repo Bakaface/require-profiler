@@ -19,6 +19,10 @@ module RequireProfiler
         @prefix_stripper = %r{^(#{prefixes.join("|")})/}
       end
 
+      def strip_prefix(path)
+        path.sub(prefix_stripper, "")
+      end
+
       def flush(node)
         raise NotImplementedError
       end

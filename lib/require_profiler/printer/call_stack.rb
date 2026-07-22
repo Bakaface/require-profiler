@@ -7,7 +7,7 @@ module RequireProfiler
       def flush(node, parts: [])
         return unless flush?(node)
 
-        path = node.path.sub(prefix_stripper, "")
+        path = strip_prefix(node.path)
         self_parts = (node.kind == :path) ? path.split("/") : [path]
 
         parts += self_parts.size.times.map { self_parts.take(_1 + 1).join("/") }

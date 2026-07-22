@@ -36,6 +36,10 @@ module RequireProfiler
       queue << event
     end
 
+    def strip_prefix(path)
+      printer.strip_prefix(path)
+    end
+
     def handle_event_sync(event)
       if event.type == :start
         node = Node.new(path: event.path, children: [], kind: event.kind)

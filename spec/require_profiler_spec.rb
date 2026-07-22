@@ -176,5 +176,30 @@ RSpec.describe RequireProfiler do
       expect(stdout).to include("integrations/yaml.rb")
       expect(stdout).to include("config/data.yml")
     end
+
+    it "captures Rails initialization: railtie initializers, to_prepare callbacks, and load hooks" do
+      script = <<~RUBY
+        require "stringio"
+        io = StringIO.new
+
+        RequireProfiler.start(
+          output: io,
+          patterns: ["#{fixtures_dir}/*.rb"]
+        )
+
+        require "integrations/rails"
+
+        RequireProfiler.stop
+        puts io.string
+      RUBY
+
+      stdout, stderr, status = run_profiler(script)
+
+      expect(status).to be_success, "stderr: #{stderr}"
+      expect(stdout).to include("integrations/rails.rb")
+      expect(stdout).to match(%r{initializer:.*rails\.rb:\d+.*\n.*leaf_a\.rb})
+      expect(stdout).to match(%r{to_prepare:.*rails\.rb:\d+.*\n.*leaf_b\.rb})
+      expect(stdout).to match(%r{load_hook:.*rails\.rb:\d+.*\n.*leaf_c\.rb})
+    end
   end
 end

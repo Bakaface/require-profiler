@@ -5,20 +5,12 @@ module RequireProfiler
     # Track Rails initialization: railtie initializers, to_prepare callbacks, and load hooks
     class RailsPlugin < Base
       module InitializerPatch
-        def self.apply!
-          ::Rails::Initializable::Initializer.prepend(self) if defined?(::Rails::Initializable::Initializer)
-        end
-
         def run(...)
           RailsPlugin.track(["initializer", name, RailsPlugin.location(block)].compact.join(":"), :initializer) { super }
         end
       end
 
       module ToPreparePatch
-        def self.apply!
-          ::ActiveSupport::Reloader.singleton_class.prepend(self) if defined?(::ActiveSupport::Reloader)
-        end
-
         def to_prepare(*args, &block)
           return super unless block
 
@@ -33,22 +25,12 @@ module RequireProfiler
       end
 
       module LoadHookPatch
-        def self.apply!
-          ::ActiveSupport.singleton_class.prepend(self) if defined?(::ActiveSupport::LazyLoadHooks)
-        end
-
         private
 
         def execute_hook(name, base, options, block)
           RailsPlugin.track(["load_hook", name, RailsPlugin.location(block)].compact.join(":"), :load_hook) { super }
         end
       end
-
-      PATCHES = {
-        "*/rails/initializable.rb" => InitializerPatch,
-        "*/active_support/reloader.rb" => ToPreparePatch,
-        "*/active_support/lazy_load_hooks.rb" => LoadHookPatch
-      }.freeze
 
       class << self
         attr_accessor :reporter
@@ -71,12 +53,14 @@ module RequireProfiler
       def activate!
         RailsPlugin.reporter = reporter
 
-        PATCHES.each_value(&:apply!)
-
-        PATCHES.each do |pattern, patch|
-          ::RequireHooks.around_load(patterns: [pattern]) do |_path, &block|
-            block.call.tap { patch.apply! }
-          end
+        Patcher.on_load("Rails::Initializable::Initializer") do
+          ::Rails::Initializable::Initializer.prepend(InitializerPatch)
+        end
+        Patcher.on_load("ActiveSupport::Reloader") do
+          ::ActiveSupport::Reloader.singleton_class.prepend(ToPreparePatch)
+        end
+        Patcher.on_load("ActiveSupport::LazyLoadHooks") do
+          ::ActiveSupport.singleton_class.prepend(LoadHookPatch)
         end
       end
     end

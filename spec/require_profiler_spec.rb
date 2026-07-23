@@ -197,9 +197,9 @@ RSpec.describe RequireProfiler do
 
       expect(status).to be_success, "stderr: #{stderr}"
       expect(stdout).to include("integrations/rails.rb")
-      expect(stdout).to match(%r{initializer:.*rails\.rb:\d+.*\n.*leaf_a\.rb})
-      expect(stdout).to match(%r{to_prepare:.*rails\.rb:\d+.*\n.*leaf_b\.rb})
-      expect(stdout).to match(%r{load_hook:.*rails\.rb:\d+.*\n.*leaf_c\.rb})
+      expect(stdout).to match(%r{rails:initializer:.*rails\.rb:\d+.*\n.*leaf_a\.rb})
+      expect(stdout).to match(%r{rails:to_prepare:.*rails\.rb:\d+.*\n.*leaf_b\.rb})
+      expect(stdout).to match(%r{rails:load_hook:.*rails\.rb:\d+.*\n.*leaf_c\.rb})
     end
   end
 end

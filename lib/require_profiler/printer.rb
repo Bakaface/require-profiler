@@ -16,11 +16,7 @@ module RequireProfiler
         prefixes << ::Gem.dir if defined?(::Gem.dir)
         prefixes << ::Bundler.bundle_path if defined?(::Bundler.bundle_path)
 
-        @prefix_stripper = %r{^(#{prefixes.join("|")})/}
-      end
-
-      def strip_prefix(path)
-        path.sub(prefix_stripper, "")
+        @prefix_stripper = %r{(^|:)(#{prefixes.join("|")})/}
       end
 
       def flush(node)
@@ -32,6 +28,10 @@ module RequireProfiler
       end
 
       private
+
+      def strip_prefix(path)
+        path.sub(prefix_stripper, '\1')
+      end
 
       def flush?(node)
         return false unless (node.time * 1000) >= threshold

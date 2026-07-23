@@ -6,7 +6,7 @@ module RequireProfiler
     class RailsPlugin < Base
       module InitializerPatch
         def run(...)
-          RailsPlugin.track(["initializer", name, RailsPlugin.location(block)].compact.join(":"), :initializer) { super }
+          RailsPlugin.track(:initializer, name, block) { super }
         end
       end
 
@@ -14,10 +14,8 @@ module RequireProfiler
         def to_prepare(*args, &block)
           return super unless block
 
-          label = ["to_prepare", RailsPlugin.location(block)].compact.join(":")
-
           super do |*prepare_args|
-            RailsPlugin.track(label, :to_prepare) do
+            RailsPlugin.track(:to_prepare, nil, block) do
               instance_exec(*prepare_args, &block)
             end
           end
@@ -28,15 +26,16 @@ module RequireProfiler
         private
 
         def execute_hook(name, base, options, block)
-          RailsPlugin.track(["load_hook", name, RailsPlugin.location(block)].compact.join(":"), :load_hook) { super }
+          RailsPlugin.track(:load_hook, name, block) { super }
         end
       end
 
       class << self
         attr_accessor :reporter
 
-        def track(path, kind)
-          reporter.handle_event(Reporter::Event.new(type: :start, kind:, path:))
+        def track(kind, name, block)
+          path = label(kind, name, block)
+          reporter.handle_event(Reporter::Event.new(type: :start, kind: :rails, path:))
           start = Time.now
           yield
         ensure
@@ -44,9 +43,8 @@ module RequireProfiler
           reporter.handle_event(Reporter::Event.new(type: :end, path:, time:))
         end
 
-        def location(block)
-          path = block&.source_location&.join(":")
-          reporter.strip_prefix(path) if path
+        def label(kind, name, block)
+          ["rails:#{kind}", name, block&.source_location&.join(":")].compact.join(":")
         end
       end
 

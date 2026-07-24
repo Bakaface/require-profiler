@@ -23,6 +23,6 @@ RSpec.describe RequireProfiler::Plugins::HTTPPlugin do
 
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("integrations/http.rb")
-    expect(stdout).to include("GET:http://ruby-lang.org")
+    expect(stdout).to include("http:GET:http://ruby-lang.org")
   end
 end

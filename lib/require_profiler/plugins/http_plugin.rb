@@ -19,7 +19,7 @@ module RequireProfiler
 
         Sniffer::DataItem::Request.include(Module.new do
           def require_path
-            @url ||= "#{method.to_s.upcase}:#{(port == 443) ? "https" : "http"}://#{host}#{query}"
+            @url ||= "http:#{method.to_s.upcase}:#{(port == 443) ? "https" : "http"}://#{host}#{query}"
           end
         end)
 

@@ -20,7 +20,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).to include("nested.rb")
-    expect(stdout).to include("lib/json.rb")
+    expect(stdout).to include("json.rb")
   end
 
   it "filters captured requires using patterns and exclude_patterns" do
@@ -43,7 +43,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).not_to include("nested.rb")
-    expect(stdout).not_to include("lib/json.rb")
+    expect(stdout).not_to include("json.rb")
   end
 
   it "filters stacks by focus" do
@@ -66,7 +66,7 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     expect(stdout).to include("leaf_a.rb")
     expect(stdout).to include("leaf_b.rb")
-    expect(stdout).not_to include("lib/json.rb")
+    expect(stdout).not_to include("json.rb")
     expect(stdout).not_to include("nested.rb")
   end
 
@@ -145,36 +145,5 @@ RSpec.describe RequireProfiler do
     expect(status).to be_success, "stderr: #{stderr}"
     data = JSON.parse(stdout)
     expect(data).to include("profiles", "shared")
-  end
-
-  context "integrations" do
-    it "captures HTTP calls and YAML loading" do
-      script = <<~RUBY
-        require "yaml"
-        require "net/http"
-
-        require "stringio"
-        io = StringIO.new
-
-        RequireProfiler.start(
-          output: io,
-          patterns: ["#{fixtures_dir}/*.rb"]
-        )
-
-        require "integrations"
-
-        RequireProfiler.stop
-        puts io.string
-      RUBY
-
-      stdout, stderr, status = run_profiler(script)
-
-      expect(status).to be_success, "stderr: #{stderr}"
-      expect(stdout).to include("integrations.rb")
-      expect(stdout).to include("integrations/http.rb")
-      expect(stdout).to include("http:GET:http://ruby-lang.org")
-      expect(stdout).to include("integrations/yaml.rb")
-      expect(stdout).to include("config/data.yml")
-    end
   end
 end

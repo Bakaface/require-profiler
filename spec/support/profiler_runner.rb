@@ -11,6 +11,7 @@ module ProfilerRunner
       RbConfig.ruby,
       "-I", File.join(ROOT, "lib"),
       "-I", FIXTURES_DIR,
+      "-r", "bundler/setup",
       "-r", "require-profiler",
       "-e", script
     )

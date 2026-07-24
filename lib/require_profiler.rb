@@ -4,6 +4,7 @@ module RequireProfiler
   autoload :Reporter, "require_profiler/reporter"
   autoload :Printer, "require_profiler/printer"
   autoload :Plugins, "require_profiler/plugins"
+  autoload :Patcher, "require_profiler/patcher"
 
   # Autoload doesn't work here, because we call it from the hooks for the first time
   require "require_profiler/ruby_profiling"

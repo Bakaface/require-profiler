@@ -2,6 +2,8 @@
 
 ## master
 
+- Add Rails initialization tracking: railtie initializers, `to_prepare` callbacks, and lazy load hooks. ([@ardecvz][])
+
 - Prefix HTTP nodes with `http:`. ([@ardecvz][])
 
 ## 0.2.3 (2026-06-05)

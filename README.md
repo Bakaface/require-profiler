@@ -112,6 +112,14 @@ Now you can use Speedscope to dig deeper.
 
 Require Profiler also captures HTTP requests and YAML file loading and add them to the profile, so you can find which Ruby files trigger the corresponding actions on load. NOTE: For HTTP requests tracking, you MUST add [sniffer][] gem to your Gemfile.
 
+Disable with `REQUIRE_PROFILER_YAML=false` or `REQUIRE_PROFILER_HTTP=false`.
+
+### Rails integration
+
+When Rails is loaded, Require Profiler automatically captures its initialization - railtie initializers, `to_prepare` callbacks, and lazy load hooks - and adds them to the profile as `initializer:`, `to_prepare:`, and `load_hook:` nodes, so you can find the slow-running blocks, which are usually invisible when profiling code loading alone.
+
+Disable with `REQUIRE_PROFILER_RAILS=false` (or set a threshold if the extra nodes add too much noise).
+
 ### Configuration
 
 `RequireProfiler.start` accepts the following keyword arguments:

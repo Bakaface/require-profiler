@@ -172,7 +172,7 @@ RSpec.describe RequireProfiler do
       expect(status).to be_success, "stderr: #{stderr}"
       expect(stdout).to include("integrations.rb")
       expect(stdout).to include("integrations/http.rb")
-      expect(stdout).to include("GET:http://ruby-lang.org")
+      expect(stdout).to include("http:GET:http://ruby-lang.org")
       expect(stdout).to include("integrations/yaml.rb")
       expect(stdout).to include("config/data.yml")
     end

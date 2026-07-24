@@ -2,6 +2,8 @@
 
 ## master
 
+- Prefix HTTP nodes with `http:`. ([@ardecvz][])
+
 ## 0.2.3 (2026-06-05)
 
 - Add SKILL.md for rails-hyperdrive. ([@palkan][])

@@ -2,6 +2,8 @@
 
 ## master
 
+- Rename hyperdrive gemspec metadata keys to a new `rails_hyperdrive_*` contract, so the skill is discoverable again. ([@ardecvz][])
+
 ## 0.3.0 (2026-07-23)
 
 - Add Rails initialization tracking: railtie initializers, `to_prepare` callbacks, and lazy load hooks. ([@ardecvz][])

@@ -1,8 +1,6 @@
 ---
 name: rails-boot-profiling
 description: Profile Rails application boot time to find slow requires. Use when the user asks why the app boots slowly, wants to profile boot time, or needs to optimize require/load performance.
-gem: require-profiler
-versions: ">= 0.2"
 ---
 
 # Rails Boot Time Profiling

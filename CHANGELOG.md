@@ -2,7 +2,9 @@
 
 ## master
 
-- Migrate to the rails-hyperdrive 0.5.0 companion contract: move skill gating (`gem: require-profiler`, `versions: ">= 0.2"`) from the `SKILL.md` frontmatter into a gem-root `hyperdrive.yml` manifest. The frontmatter keys are no longer read by rails-hyperdrive 0.5.0+ and are removed.
+- Migrate to the rails-hyperdrive 0.5.0 companion contract: move skill gating (`gem: require-profiler`, `versions: ">= 0.3"`) from the `SKILL.md` frontmatter into a gem-root `hyperdrive.yml` manifest. The frontmatter keys are no longer read by rails-hyperdrive 0.5.0+ and are removed.
+
+- Update the skill: cover the Rails initialization, prefixes and refresh the boot-optimization guidance. ([@ardecvz][])
 
 ## 0.3.1 (2026-08-14)
 

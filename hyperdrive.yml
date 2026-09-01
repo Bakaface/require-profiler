@@ -1,2 +1,2 @@
-gem: require-profiler
-versions: ">= 0.3"
+gems:
+  - require-profiler: ">= 0.3"
